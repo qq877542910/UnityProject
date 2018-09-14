@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public MeshFilter mf;
-    public Mesh mesh;
+
     public MeshRenderer mr;
+    private MeshFilter mf;
+    private Mesh mesh;
 
     public int xr, yr, zr;
     public float power;
@@ -27,8 +28,8 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        mesh = new Mesh();
-        mf.mesh = mesh;
+        mf = mr.GetComponent<MeshFilter>();
+        mesh = mf.mesh;
 
         map = new Map();
         map.OnMapChanged += this.OnMapChanged;
@@ -55,13 +56,13 @@ public class GameController : MonoBehaviour
 
     private void OnMapChanged()
     {
-        mesh = new Mesh();
-        mf.mesh = mesh;
+        mesh.Clear();
         mesh.SetVertices(map.allTrianglePoints);
         mesh.SetTriangles(map.allTriangleIndexs, 0);
+        mesh.SetUVs(0, map.allUvs);
 
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
+        //mesh.RecalculateNormals();
+        //mesh.RecalculateBounds();
     }
 
     private void MapGenScene()

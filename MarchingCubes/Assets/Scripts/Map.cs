@@ -16,6 +16,8 @@ public class Map
 
     public List<int> allTriangleIndexs = new List<int>();
 
+    public List<Vector2> allUvs = new List<Vector2>();
+
     public System.Action OnMapChanged;
 
     public void Init( int XR , int YR , int ZR , float power = 1)
@@ -28,6 +30,7 @@ public class Map
         allTriangles.Clear();
         allTriangleIndexs.Clear();
         allTrianglePoints.Clear();
+        allUvs.Clear();
 
         maps = new float[xR, zR];
 
@@ -45,6 +48,7 @@ public class Map
         this.allTriangles.Clear();
         this.allTrianglePoints.Clear();
         this.allTriangleIndexs.Clear();
+        this.allUvs.Clear();
 
         allTriangles = TriTableDefine.GetTriangles(str);
 
@@ -55,6 +59,10 @@ public class Map
             allTriangleIndexs.Add(i * 3);
             allTriangleIndexs.Add(i * 3 + 1);
             allTriangleIndexs.Add(i * 3 + 2);
+
+            allUvs.Add(new Vector2(0, 0));
+            allUvs.Add(new Vector2(1, 0));
+            allUvs.Add(new Vector2(1, 1));
         }
     }
 
@@ -82,6 +90,7 @@ public class Map
         allTriangles.Clear();
         allTriangleIndexs.Clear();
         allTrianglePoints.Clear();
+        allUvs.Clear();
 
         for (int y = 0; y < yR; y++)
         {
@@ -103,6 +112,10 @@ public class Map
             allTriangleIndexs.Add(i * 3);
             allTriangleIndexs.Add(i * 3 + 1);
             allTriangleIndexs.Add(i * 3 + 2);
+
+            allUvs.Add(new Vector2(0, 0));
+            allUvs.Add(new Vector2(0, 1));
+            allUvs.Add(new Vector2(1, 1));
         }
 
         if (this.OnMapChanged != null)
