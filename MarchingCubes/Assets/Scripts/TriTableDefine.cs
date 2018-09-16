@@ -19,6 +19,20 @@ public class TriTableDefine
     };
     #endregion
 
+    #region uvs
+    public static readonly List<Vector3> Uvs = new List<Vector3>()
+    {
+        new Vector3(1,1),
+        new Vector3(0,1),
+        new Vector3(0,0),
+        new Vector3(1,0),
+        new Vector3(1,0),
+        new Vector3(0,0),
+        new Vector3(0,1),
+        new Vector3(1,0),
+    };
+    #endregion
+
     #region edges
     public static readonly List<Vector2> Edges = new List<Vector2>()
     {
@@ -299,12 +313,13 @@ public class TriTableDefine
         };
     #endregion
 
+
     //包含8个字段,代表是否包含,0为界内， 1为界外
-    public static List<Triangle> GetTriangles(string includes , Vector3? worldPoint = null)
+    public static List<Vector3> GetTriangles(string includes)
     {
         int id = System.Convert.ToInt32(includes, 2);
 
-        List<Triangle> triangles = new List<Triangle>();
+        List<Vector3> vertexs = new List<Vector3>();
 
         if (id >= 0 && id < TriTable.Length && TriTable[id, 0] != -1)
         {
@@ -314,21 +329,16 @@ public class TriTableDefine
                 {
                     break;
                 }
-                Triangle triangle = new Triangle();
-                triangle.e1 = Edges[TriTable[id, i]];
-                triangle.e2 = Edges[TriTable[id, i + 1]];
-                triangle.e3 = Edges[TriTable[id, i + 2]];
+                Vector2 e1 = Edges[TriTable[id, i]];
+                Vector2 e2 = Edges[TriTable[id, i + 1]];
+                Vector2 e3 = Edges[TriTable[id, i + 2]];
 
-                triangle.v1 = EdgeToPoint(triangle.e1);
-                triangle.v2 = EdgeToPoint(triangle.e2);
-                triangle.v3 = EdgeToPoint(triangle.e3);
-
-                triangle.worldPoint = (worldPoint == null ? Vector3.zero : worldPoint.Value);
-
-                triangles.Add(triangle);
+                vertexs.Add(EdgeToPoint(e1));
+                vertexs.Add(EdgeToPoint(e2));
+                vertexs.Add(EdgeToPoint(e3));
             }
         }
-        return triangles;
+        return vertexs;
     }
 
     private static Vector3 EdgeToPoint(Vector2 edge)
