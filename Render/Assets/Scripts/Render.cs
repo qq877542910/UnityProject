@@ -9,18 +9,18 @@ public class Render : MonoBehaviour
 
     private void Start()
     {
-
         RenderMgr.Instance.Init(width, height);
         mat.mainTexture = RenderMgr.Instance.RenderTexture;
 
-        //RenderMgr.Instance.DrawLine(new Vector3(0, height * 0.5f), new Vector3(width, height * 0.5f), Color.red);
-        //RenderMgr.Instance.DrawLine(new Vector3(0, 0), new Vector3(width, height), Color.red);
-
-        Vector3 v0 = new Vector3(0, 0, 0);
-        Vector3 v1 = new Vector3(width, 0, 0);
-        Vector3 v2 = new Vector3(width * 0.5f, height, 0);
-        RenderMgr.Instance.DrawLine(v0, v2, Color.red);
-       // RenderMgr.Instance.DrawTrangle(v0, v1, v2, Color.red, Color.red, Color.red);
+        for (int i = 0; i < 3; i++)
+        {
+            int x0 = Random.Range(0, width);
+            int y0 = Random.Range(0, height);
+            int x1 = Random.Range(0, width);
+            int y1 = Random.Range(0, height);
+            Debug.LogFormat("[{0},{1}] -- [{2},{3}]", x0, y0, x1, y1);
+            RenderMgr.Instance.DrawLine(x0, y0, x1, y1, Color.red);
+        }
         RenderMgr.Instance.Render();
     }
 

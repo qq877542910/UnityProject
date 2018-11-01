@@ -54,127 +54,34 @@ public class RenderMgr
         }
     }
 
-    public void DrawLine(Vector3 start, Vector3 end, Color color)
+    public void DrawLine(int x0, int y0, int x1, int y1, Color color)
     {
-        int minX, maxX, minY, maxY;
-        minX = Mathf.CeilToInt(Mathf.Min(start.x, end.x));
-        maxX = Mathf.CeilToInt(Mathf.Max(start.x, end.x));
-        minY = Mathf.CeilToInt(Mathf.Min(start.y, end.y));
-        maxY = Mathf.CeilToInt(Mathf.Max(start.y, end.y));
+        int dx = x1 - x0;
+        int dy = y1 - y0;
+        int k;
+        float xincrement, yincrement;
+        float x = x0, y = y0;
 
-        if (Mathf.Abs(maxX - minX ) > Mathf.Abs(maxY - minY))
-        {
-            for (int x = minX; x <= maxX; x++)
-            {
-                float t = (x - minX) / (float)(maxX - minX);
-                int y = Mathf.CeilToInt(Mathf.Lerp(minY, maxY, t));
-                float z = Mathf.Lerp(start.z, end.z, t);
-                DrawPixel(x, y, z, color);
-            }
-        }
+        if (Mathf.Abs(dx) > Mathf.Abs(dy))
+            k = Mathf.Abs(dx);
         else
+            k = Mathf.Abs(dy);
+
+        xincrement = (dx) / (float)(k);
+        yincrement = (dy) / (float)(k);
+
+        DrawPixel(Mathf.RoundToInt(x0), Mathf.RoundToInt(y0), 0, color);
+        for (int i = 0; i < k; i++)
         {
-            for (int y = minY; y <= maxY; y++)
-            {
-                float t = (y - minY) / (float)(maxY - minY);
-                int x = Mathf.CeilToInt(Mathf.Lerp(minX, maxX, t));
-                float z = Mathf.Lerp(start.z, end.z, t);
-                DrawPixel(x, y, z, color);
-            }
+            x += xincrement;
+            y += yincrement;
+            DrawPixel(Mathf.RoundToInt(x), Mathf.RoundToInt(y),0 , color);//只有坐标轴上增加斜率K大于0.5时才会在坐标轴上加1
         }
     }
 
-    public void DrawTrangle(Vector3 v1, Vector3 v2, Vector3 v3, Color v1Color, Color v2Color, Color v3Color)
+    public void DrawLine(Vector2 v1, Vector2 v2, Color color)
     {
-        int minX, maxX, minY, maxY;
-        float minZ, maxZ;
-
-        minX = Mathf.CeilToInt(Mathf.Min(v1.x, v2.x, v3.x));
-        maxX = Mathf.CeilToInt(Mathf.Max(v1.x, v2.x, v3.x));
-        minY = Mathf.CeilToInt(Mathf.Min(v1.y, v2.y, v3.y));
-        maxY = Mathf.CeilToInt(Mathf.Max(v1.y, v2.y, v3.y));
-        minZ = Mathf.Min(v1.z, v2.z, v3.z);
-        maxZ = Mathf.Max(v1.z, v2.z, v3.z);
-
-        DrawLine(v1, v2, v1Color);
-        DrawLine(v2, v3, v2Color);
-       // DrawLine(v1, v3, v3Color);
-
-        //for (int y = minY; y <= maxY; y++)
-        //{
-        //    for (int x = minX; x <= maxX; x++)
-        //    {
-        //        Vector3 point = new Vector3(x, y, 0);
-        //        float z = (y - minY) / (float)(maxY - minY);
-
-        //        float ct = Vector3.Distance(point , v1) / Vector3.Distance(v1 , v2);
-        //        Color color = Color.Lerp(v1Color, v2Color, ct);
-
-        //        ct = Vector3.Distance(point, v2) / Vector3.Distance(v2, v3);
-        //        color = Color.Lerp(color, v2Color, ct);
-
-        //        if (PointinTriangle1(v1, v2, v3, point))
-        //        {
-        //            DrawPixel(x, y, z, color);
-        //        }
-        //    }
-        //}
-    }
-
-    public void DrawTrangle(Vector3 v1, Vector3 v2, Vector3 v3, Color color)
-    {
-        DrawTrangle(v1, v2, v3, color, color, color);
-    }
-
-    bool SameSide(Vector3 A, Vector3 B, Vector3 C, Vector3 P)
-    {
-        Vector3 AB = B - A;
-        Vector3 AC = C - A;
-        Vector3 AP = P - A;
-
-        Vector3 v1 =Vector3.Cross( AB,AC);
-        Vector3 v2 = Vector3.Cross(AB,AP);
-
-        // v1 and v2 should point to the same direction
-        return Vector3.Dot(v1,v2) >= 0;
-    }
-
-    // Same side method
-    // Determine whether point P in triangle ABC
-    bool PointinTriangle1(Vector3 A, Vector3 B, Vector3 C, Vector3 P)
-    {
-        return SameSide(A, B, C, P) &&
-            SameSide(B, C, A, P) &&
-            SameSide(C, A, B, P);
-    }
-
-    bool PointinTriangle(Vector3 A, Vector3 B, Vector3 C, Vector3 P)
-    {
-        Vector3 v0 = C - A;
-        Vector3 v1 = B - A;
-        Vector3 v2 = P - A;
-
-        float dot00 = Vector3.Dot(v0, v0);
-        float dot01 = Vector3.Dot(v0, v1);
-        float dot02 = Vector3.Dot(v0, v2);
-        float dot11 = Vector3.Dot(v1, v1);
-        float dot12 = Vector3.Dot(v1, v2);
-
-        float inverDeno = 1 / (dot00 * dot11 - dot01 * dot01);
-
-        float u = (dot11 * dot02 - dot01 * dot12) * inverDeno;
-        if (u < 0 || u > 1) // if u out of range, return directly
-        {
-            return false;
-        }
-
-        float v = (dot00 * dot12 - dot01 * dot02) * inverDeno;
-        if (v < 0 || v > 1) // if v out of range, return directly
-        {
-            return false;
-        }
-
-        return u + v <= 1;
+        DrawLine((int)v1.x, (int)v1.y, (int)v2.x, (int)v2.y, color);
     }
 
     public void Clear(Color color , float depth = -1)
